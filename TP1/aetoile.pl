@@ -1,4 +1,4 @@
-%*******************************************************************************
+p%*******************************************************************************
 %                                    AETOILE
 %*******************************************************************************
 
@@ -15,7 +15,7 @@ Rappels sur l'algorithme
    Pu est le meme ensemble mais ordonne lexicographiquement (selon la donnee de
    l'etat). Il permet de retrouver facilement n'importe quel etat pendant
 
-   On gere les 2 ensembles de fa�on synchronisee : chaque fois qu'on modifie
+   On gere les 2 ensembles de fa�on synchronisee : chaque fois qu'on modifie
    (ajout ou retrait d'un etat dans Pf) on fait la meme chose dans Pu.
 
    Q est l'ensemble des etats deja developpes. Comme Pu, il permet de retrouver
@@ -42,29 +42,37 @@ Predicat principal de l'algorithme :
 
 %*******************************************************************************
 
-:- ['avl.pl'].       % predicats pour gerer des arbres bin. de recherche   
+:- ['avl.pl'].       % predicats pour gerer des arbres bin. de recherche
 :- ['taquin.pl'].    % predicats definissant le systeme a etudier
 
 %*******************************************************************************
 
-main :-
-	% initialisations Pf, Pu et Q 
-
-	% lancement de Aetoile
-
-	true.   %********
-			% A FAIRE
-			%********
-
-
+main :- initial_state(S0), heuristique2(S0, H0), G0 is -1, F0 is H0+G0,
+	empty(Pf), empty(Pu), empty(Q),
+	insert( [[F0,H0,G0], S0], Pf, Pf),
+	insert( [S0, [F0,H0,G0], nil, nil], Pu, Pu),
+	aetoile(Pf, Pu, Q).
 
 %*******************************************************************************
 
-aetoile(Pf, Ps, Qs) :-
-	true.   %********
-			% A FAIRE
-			%********
+loop_successors([], _, _, _).
+loop_successors([[S]|Ls], Pf, Pu, Q) :-
+	S=[U, _, _, _], member(U, Q), loop_successors(Ls, Pf, Pu, Q).
 	
+	
+expand(U, G, ListNoeudsSuccDirect):-
+	findall( [S, [Fs, Hs, Gs], U, A], 
+		(rule(A,1, U, S), heuristique(S,Hs),Gs is G+1,Fs is Gs+Hs), 
+		ListNoeudsSuccDirect).
 
-	
-   
+affiche_solution :- true.
+
+aetoile(Pf, Pu, _) :-
+	empty(Pf), empty(Pu),
+	print("PAS de SOLUTION : L’ETAT FINAL N’EST PAS ATTEIGNABLE !").
+aetoile(Pf, _, Q) :-
+	suppress_min([[_, _, G], Fmin], Pf, _), final_state(Fmin), affiche_solution.
+aetoile(Pf, Ps, Qs) :-
+	suppress_min([_, Umin], Pf, Pf2), suppress([Umin, _, _, _], Pu, Pu2),
+	expand(Umin, G, Succ), loop_successors(Succ)
+

@@ -1,5 +1,5 @@
 %***************************
-% Gestion d'un AVL en Prolog
+% Gestion dun AVL en Prolog
 %***************************
 
 %***************************
@@ -13,34 +13,34 @@
 %*************************
 
 % Les AVL sont des arbres BINAIRES DE RECHERCHE H-EQUILIBRES : 
-% La hauteur de l'avl A est définie par :
+% La hauteur de lavl A est definie par :
 %  -1, si A est vide (A=nil)
 %  1 + max( hauteur(ss_arbre_gauche(A)), hauteur(ss_arbre_droitee(A)) ) sinon
 
-% Tout noeud de l'arbre est soit :
+% Tout noeud de larbre est soit :
 % - une feuille
-% - un noeud interne tel que la différence de hauteur entre le sous-arbre droit
-% 	et le sous-arbre gauche appartient à  [-1,0,+1]
+% - un noeud interne tel que la diffï¿½rence de hauteur entre le sous-arbre droit
+% 	et le sous-arbre gauche appartient ï¿½  [-1,0,+1]
 
 
 %***********************************************
 % PREDICATS EXPORTES ET COMPLEXITE ALGORITHMIQUE
 %***********************************************
-% soit N = nombre de noeuds de l'arbre				%   UTILITE POUR A*
+% soit N = nombre de noeuds de larbre				%   UTILITE POUR A*
 %													%   ----------------													
-% empty(?Avl)						O(1)			%<<< initialisation de P et Q
+% empty(?Avl)						O(1)			%   initialisation de P et Q
 % height(+Avl, ?Height)             O(1)			
 % put_flat(+Avl)                    O(N)			
 % put_90(+Avl)                      O(N)			
-% belongs(+Elem, +Avl)              O(log N)		%<<< appartenance d'un noeud à Q
+% belongs(+Elem, +Avl)              O(log N)		%   appartenance dun noeud a Q
 % subtree(+Elem, +Avl, Ss_Avl)      O(log N)
-% insert(+Elem, +Avant, ?Apres)     O(log N)		%<<< insertion d'un nouveau noeud dans P ou dans Q
-% suppress(+Elem,+Avant,?Apres)     O(log N)		%<<< mise  à jour <=> suppression puis insertion
-% suppress_min(?Min,+Avant,?Apres)  O(log N)		%<<< supression du noeud minimal
+% insert(+Elem, +Avant, ?Apres)     O(log N)		%   insertion dun nouveau noeud dans P ou dans Q
+% suppress(+Elem,+Avant,?Apres)     O(log N)		%   mise a jour <=> suppression puis insertion
+% suppress_min(?Min,+Avant,?Apres)  O(log N)		%   supression du noeud minimal
 % suppress_max(?Max,+Avant,?Apres)  O(log N)
 
 %****************************
-% Prédicats internes (prives)
+% Predicats internes (prives)
 %****************************
 
 % left_rotate(+Avant, ?Apres)		O(1)
@@ -57,21 +57,21 @@
 empty(nil).
 
 	%-----------------
-	% Hauteur d'un AVL
+	% Hauteur dun AVL
 	%-----------------
 	% par convention, un avl vide a une hauteur de -1
-	% sinon la hauteur est enregistree au meme niveau que la racine de l'avl
-	% elle n'est pas calculee recursivement "from scratch"
-	% elle est mise à jour de façon incrémentale, apres chaque insertion ou suppression
-	% d'ou sa complexité en O(1)  :-)
+	% sinon la hauteur est enregistree au meme niveau que la racine de lavl
+	% elle nest pas calculee recursivement "from scratch"
+	% elle est mise ï¿½ jour de faï¿½on incrï¿½mentale, apres chaque insertion ou suppression
+	% dou sa complexite en O(1) :-)
 
-height(nil,             -1).
+height(nil,-1).
 height(avl(_G,_R,_D, H), H).
 
 	%-------------------
-	% Affichage d'un AVL
+	% Affichage dun AVL
 	%-------------------
-	% dans l'ordre croissant (lexicographique)
+	% dans lordre croissant (lexicographique)
 
 put_flat(nil).
 put_flat(avl(G,R,D,_H)) :-
@@ -80,7 +80,7 @@ put_flat(avl(G,R,D,_H)) :-
 	put_flat(D).
 
 	%----------------------------
-	% Affichage (couché) d'un AVL
+	% Affichage (couche) dun AVL
 	%----------------------------
 
 put_90(Avl) :-
@@ -96,7 +96,7 @@ put_90(avl(G,R,D,_H),Str) :-
 	put_90(G,Str2).
 
 	%-----------------------------------------
-	% Appartenance d'un element donne a un AVL	
+	% Appartenance dun element donne a un AVL	
 	%-----------------------------------------
 
 belongs(Elem, avl(G,Racine,D,_Hauteur)) :-
@@ -128,13 +128,13 @@ subtree(Elem, avl(G,Racine,D,H), A) :-
 	%----------------------
 	% Rotations dans un avl
 	%----------------------
-	% Les rotations ci-dessous décrivent uniquement les cas ou la rotation est possible.
-	% Dans les autres cas, ces relations échouent ; plus précisément :
-	% a/ si l'arbre est un avl vide, alors aucune rotation n'est possible ;
-	% b/ si l'arbre est un avl non vide mais si son ss-arbre gauche est un avl vide
-	%    alors la rotation droite n'est pas possible ;
-	% c/ si l'arbre est un avl non vide mais si son ss-arbre droite est un avl vide
-	%    alors la rotation gauche n'est pas possible.
+	% Les rotations ci-dessous dï¿½crivent uniquement les cas ou la rotation est possible.
+	% Dans les autres cas, ces relations ï¿½chouent ; plus prï¿½cisï¿½ment :
+	% a/ si larbre est un avl vide, alors aucune rotation nest possible ;
+	% b/ si larbre est un avl non vide mais si son ss-arbre gauche est un avl vide
+	%    alors la rotation droite nest pas possible ;
+	% c/ si larbre est un avl non vide mais si son ss-arbre droite est un avl vide
+	%    alors la rotation gauche nest pas possible.
 
 right_rotate(avl(G,R,D,_H), A_Apres) :-
 	height(D,HD),
@@ -159,23 +159,23 @@ left_rotate(avl(G,R,D,_), A_Apres) :-
 	%---------------------------------
 	% Insertion equilibree dans un avl
 	%---------------------------------
-	% On suppose que l'arbre avant insertion est equilibré (difference de hauteur
+	% On suppose que larbre avant insertion est equilibrï¿½ (difference de hauteur
 	% entre les ss-arbres gauche et droite de 1 au maximum)
-	% L'insertion doit assurer qu'apres insertion l'arbre est toujours equilibre
+	% Linsertion doit assurer quapres insertion larbre est toujours equilibre
 	% sinon les rotations necessaires sont effectuees.
 
-	% On suppose que les noeuds contiennent des informations que l'on peut comparer
-	% a l'aide d'une relation d'ordre lexicographique (la cle c'est l'info elle-meme)
-	% En prolog, c'est la relation '@<'
+	% On suppose que les noeuds contiennent des informations que lon peut comparer
+	% a laide dune relation dordre lexicographique (la cle cest linfo elle-meme)
+	% En prolog, cest la relation '@<'
 	% On peut comparer par exemple des integer, des string, des constantes,
-	% des listes d'entiers, des listes de constantes, etc ... bref, des termes clos
-	% T1 @< T2 est vrai si T1 est lexicographiquement inférieur a T2.
+	% des listes dentiers, des listes de constantes, etc ... bref, des termes clos
+	% T1 @< T2 est vrai si T1 est lexicographiquement infï¿½rieur a T2.
 
 insert(Elem, nil, avl(nil,Elem,nil,0)).
 insert(Elem, AVL, NEW_AVL) :-
 	AVL = avl(Gauche,Racine,Droite,_Hauteur),
 	(Elem = Racine ->
-			% l'élément est déjà present, pas d'insertion possible
+			% lelement est dï¿½jï¿½ present, pas dinsertion possible
 		fail
 	;
 		(Elem @< Racine ->
@@ -201,20 +201,20 @@ insert(Elem, AVL, NEW_AVL) :-
 	%------------------------------------------------
 	% Suppression d'un element quelconque dans un avl
 	%------------------------------------------------
-	% On suppose que l'élément à supprimer appartient bien à l'AVL,
-	% sinon le predicat échoue (en particulier si l'AVL est vide).
+	% On suppose que l'ï¿½lï¿½ment ï¿½ supprimer appartient bien ï¿½ l'AVL,
+	% sinon le predicat ï¿½choue (en particulier si l'AVL est vide).
 	
 suppress(Elem, AVL, NEW_AVL) :-
 	AVL = avl(Gauche, Racine, Droite, _Hauteur),
 	(Elem = Racine ->
-		% cas de la suppression de la racine de l'avl
-		(Gauche = nil -> % cas simple d'une feuille ou d'un avl sans fils gauche
+		% cas de la suppression de la racine de lavl
+		(Gauche = nil -> % cas simple dune feuille ou dun avl sans fils gauche
 			NEW_AVL = Droite
 		; 
-			(Droite = nil -> % cas simple d'un avl avec fils gauche mais sans fils droit
+			(Droite = nil -> % cas simple dun avl avec fils gauche mais sans fils droit
 				NEW_AVL = Gauche
 			;
-				% cas d'un avl avec fils gauche ET fils droit 
+				% cas dun avl avec fils gauche ET fils droit 
 				%Gauche \= nil
 				%Droite \= nil
 				suppress_max(Max, Gauche, New_Gauche),
@@ -223,7 +223,7 @@ suppress(Elem, AVL, NEW_AVL) :-
 			)
 		)
 	;
-		% cas des suppressions d'un element autre que la racine 
+		% cas des suppressions dun element autre que la racine 
 		(Elem @< Racine ->
 			% suppression dans le ss-arbre gauche
 			suppress(Elem, Gauche, New_Gauche),
@@ -241,7 +241,7 @@ suppress(Elem, AVL, NEW_AVL) :-
 	%-------------------------------------------------------
 	% Suppression du plus petit element dans un avl non vide
 	%-------------------------------------------------------
-	% Si l'avl est vide, le prédicat échoue
+	% Si lavl est vide, le prï¿½dicat ï¿½choue
 
 suppress_min(Min, AVL, NEW_AVL) :-
 	AVL = avl(Gauche,Racine,Droite, _Hauteur),
@@ -258,7 +258,7 @@ suppress_min(Min, AVL, NEW_AVL) :-
 	%-------------------------------------------------------
 	% Suppression du plus grand element dans un avl non vide
 	%-------------------------------------------------------
-	% Si l'avl est vide, le prédicat échoue
+	% Si lavl est vide, le prï¿½dicat ï¿½choue
 
 suppress_max(Max, AVL, NEW_AVL) :-
 	AVL = avl(Gauche,Racine,Droite, _Hauteur),
@@ -273,10 +273,10 @@ suppress_max(Max, AVL, NEW_AVL) :-
 	).
 	
 	%----------------------------------------
-	% Re-equilibrages d'un avl vers la gauche
+	% Re-equilibrages dun avl vers la gauche
 	%----------------------------------------
-	% - soit apres insertion   d'un element dans le sous-arbre droite
-	% - soit apres suppression d'un élément dans le sous-arbre gauche
+	% - soit apres insertion   dun element dans le sous-arbre droite
+	% - soit apres suppression dun ï¿½lï¿½ment dans le sous-arbre gauche
 	%----------------------------------------------------------------
 
 left_balance(Avl, New_Avl) :-
@@ -300,16 +300,16 @@ left_balance(Avl, New_Avl) :-
 			left_rotate(Avl_Int, New_Avl)
 		)
 	;
-	% la suppression n'a pas desequilibre l'avl
+	% la suppression na pas desequilibre lavl
 		New_Hauteur is 1+max(HG,HD),
 		New_Avl = avl(Gauche, Racine, Droite, New_Hauteur)
 	).
 
 	%----------------------------------------
-	% Re-equilibrages d'un avl vers la droite
+	% Re-equilibrages dun avl vers la droite
 	%----------------------------------------
-	% - soit apres insertion   d'un element dans le sous-arbre gauche
-	% - soit apres suppression d'un élément dans le sous-arbre droite
+	% - soit apres insertion   dun element dans le sous-arbre gauche
+	% - soit apres suppression dun ï¿½lï¿½ment dans le sous-arbre droite
 	%----------------------------------------------------------------
 	
 right_balance(Avl, New_Avl) :-
@@ -333,7 +333,7 @@ right_balance(Avl, New_Avl) :-
 			right_rotate(Avl_Int, New_Avl)
 		)
 	;
-	% la suppression n'a pas desequilibre l'avl
+	% la suppression na pas desequilibre lavl
 		New_Hauteur is 1+max(HG,HD),
 		New_Avl = avl(Gauche, Racine, Droite, New_Hauteur)
 	).

@@ -217,13 +217,17 @@ heuristique1(U, H) :-
 % Somme des distances de Manhattan à parcourir par chaque piece
 % entre sa position courante et sa positon dans letat final
 
-distMan(P, Dist)
-   //finir euristique 2//
+distManhat(P, U, Final, Dist) :-
+   coordonnees([Lu, Cu], U, P),
+   coordonnees([Lf, Cf], Final, P), P\=vide,
+   Dist is (abs(Lu-Lf)+abs(Cu-Cf)).
+
+
 heuristique2(U, H) :-
-   final_state(Final), coordonnees([Lu, Cu], U, Pu),
-   coordonnees([Lf, Cf], Final, Pf), Pu=Pf,
-   findall( (abs(Lu-Lf) + abs(Cu-Cf)) , Pu\=vide, R),
-   sumlist(R,H).
+   final_state(Final), 
+   findall( Dist, distManhat(_, U, Final, Dist), Res),
+   sumlist(Res,H).
+
 
 
 									
