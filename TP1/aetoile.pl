@@ -47,7 +47,7 @@ Predicat principal de l'algorithme :
 
 %*******************************************************************************
 
-main :- initial_state(S0), heuristique2(S0, H0), G0 is -1, F0 is H0+G0,
+main :- initial_state(S0), heuristique2(S0, H0), G0 is 0, F0 is H0+G0,
 	empty(Pf), empty(Pu), empty(Q),
 	insert( [[F0,H0,G0], S0], Pf, Pf),
 	insert( [S0, [F0,H0,G0], nil, nil], Pu, Pu),
@@ -57,22 +57,37 @@ main :- initial_state(S0), heuristique2(S0, H0), G0 is -1, F0 is H0+G0,
 
 loop_successors([], _, _, _).
 loop_successors([[S]|Ls], Pf, Pu, Q) :-
-	S=[U, _, _, _], member(U, Q), loop_successors(Ls, Pf, Pu, Q).
+	(S=[U, _, _, _], belongs(U, Q), loop_successors(Ls, Pf, Pu, Q),
+	loop_successors(Ls, Pf, Pu, Q)
+	);(
+	S=[U, [Fs, _, _], _, _], belongs([U,[Fpu, Hpu, Gpu],Perepu, Apu], Pu), Fs =< Fpu,
+	suppress([U,[Fpu, Hpu, Gpu],Perepu, Apu], Pu, Pu2),
+	suppress([U,[Fpu, Hpu, Gpu],Perepu, Apu], Pf, Pf2),
+	insert(S, Pu2, Pu3),
+	insert(S, Pf2, Pf3),
+	loop_successors(Ls, Pf3, Pu3, Q)
+	);(
+	insert(S, Pu, Pu2),
+	insert(S, Pf, Pf2),
+	loop_successors(Ls, Pf2, Pu2, Q)).
 	
-	
-expand(U, G, ListNoeudsSuccDirect):-
-	findall( [S, [Fs, Hs, Gs], U, A], 
-		(rule(A,1, U, S), heuristique(S,Hs),Gs is G+1,Fs is Gs+Hs), 
-		ListNoeudsSuccDirect).
+expand(U, G, Successeurs):-
+	findall( [S, [F, H, G], U, A], 
+		(rule(A,_, U, S), heuristique(S,H),G is G+1,F is G+H), 
+		Successeurs).
 
-affiche_solution :- true.
+affiche_solution(_, nil) :- write("Finito\n").
+affiche_solution(Q, U) :-
+	belongs([U, _, Pere, _], Q), suppress([U, _, Pere, A], Q, NewQ),
+	write(A), write(" ; "),
+	write(U), write(\n);
+	affiche_solution(NewQ, Pere).
 
 aetoile(Pf, Pu, _) :-
 	empty(Pf), empty(Pu),
 	print("PAS de SOLUTION : L’ETAT FINAL N’EST PAS ATTEIGNABLE !").
 aetoile(Pf, _, Q) :-
-	suppress_min([[_, _, G], Fmin], Pf, _), final_state(Fmin), affiche_solution.
-aetoile(Pf, Ps, Qs) :-
+	suppress_min([[_, _, _], Fmin], Pf, _), final_state(Fmin), affiche_solution(Q, Fmin).
+aetoile(Pf, Pu, Q) :-
 	suppress_min([_, Umin], Pf, Pf2), suppress([Umin, _, _, _], Pu, Pu2),
-	expand(Umin, G, Succ), loop_successors(Succ)
-
+	expand(Umin, G, Succ), loop_successors(Succ, Pf, Pu, Q), aetoile(Pf, Pu, Q).
