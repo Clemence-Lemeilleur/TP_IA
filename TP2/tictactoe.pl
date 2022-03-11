@@ -123,11 +123,14 @@ alignement_perdant(Ali, J) :- 	J=x, possible(Ali, o), ground(Ali);
 */
 
 
+
+CptPoss :- findall(Poss, )
+
 heuristique(J,Situation,H) :-
    H = 10000,
    alignement(Alig,Situation),
    alignement_gagnant(Alig,J), !;
-   adversaire(J, Adv), H is
+   adversaire(J, Adv), CptPoss(J, )
 
 	
 heuristique(J,Situation,H) :-		% cas 2
