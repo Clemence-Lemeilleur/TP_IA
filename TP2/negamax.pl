@@ -57,6 +57,17 @@ A FAIRE : ECRIRE ici les clauses de negamax/5
 .....................................
 	*/
 
+negamax(J, Etat, Pmax, Pmax, [_, H]) :- !,%cas numero 1
+	heuristique(J,Etat,H), write(Pmax), write(Etat), write(H), nl.
+	
+
+negamax(J, Etat, _, _, [_, H]) :- %cas numero 2
+	ground(Etat), heuristique(J,Etat,H).
+
+negamax(J, Etat, P, Pmax, [Coup, Val]):-
+	successeurs(J, Etat, Liste_coup_poss),
+	loop_negamax(J, P, Pmax, Liste_coup_poss, Liste_couples),
+	meilleur(Liste_couples, [Coup, V1]), Val is -V1.
 
 	/*******************************************
 	 DEVELOPPEMENT D'UNE SITUATION NON TERMINALE
@@ -119,16 +130,27 @@ A FAIRE : commenter chaque litteral de la 2eme clause de loop_negamax/5,
 A FAIRE : ECRIRE ici les clauses de meilleur/2
 	*/
 
+meilleur([Couple], Couple). %cas liste a un elem
+
+meilleur([[Coup, Valeur] | Couple_suivant], Meilleur_Couple) :- 
+	meilleur(Couple_suivant, [Meilleur_coup, Meilleure_valeur]),
+	( Meilleure_valeur >= Valeur ->
+		Meilleur_Couple = [Coup, Valeur]
+	;	Meilleure_valeur < Valeur ->
+		Meilleur_Couple = [Meilleur_coup, Meilleure_valeur]
+	).
+	
 
 
 	/******************
   	PROGRAMME PRINCIPAL
   	*******************/
 
-main(B,V, Pmax) :-
+%main(B,V, Pmax) :-
 
-	true.        
+%	true.        
 
+% situation_initiale(E), negamax(x, E, 0, 1, [_, 4]).
 
 	/*
 A FAIRE :
@@ -136,3 +158,15 @@ A FAIRE :
 	Pmax = 1, 2, 3, 4 ...
 	Commentez les r閟ultats obtenus.
 	*/
+
+
+test_negmax1([	[x,o,_],
+				[o,_,o],
+				[x,o,_] ]).
+
+test_negmax2([	[x,_,_],
+				[_,_,o],
+				[x,o,_] ]).
+
+:- joueur_initial(J), test_negmax1(S), negamax(J,S,0,3,A).
+
