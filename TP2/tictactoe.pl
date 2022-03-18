@@ -42,12 +42,17 @@ test_perdant_J([ 	[x,x,o],
 					[o,o,o],
 					[x,o,x] ]).
 
+test_negmax1([	[x,o,_],
+				[o,_,o],
+				[x,o,_] ]).
+
 test_egalite([ 	[x,o,x],
 				[o,x,o],
 				[o,x,o] ]).
 
 test_predicats :-	test_align_gg(S), joueur_initial(J), 
 					alignement(Ali, S), alignement_gagnant(Ali, J).
+
 
 joueur_initial(x).
 
@@ -66,7 +71,6 @@ colonne(C,M) :- maplist(nth1(_), M, C).
 		
 diagonale(D, M) :- 
 	premiere_diag(1,D,M).
-
 
 diagonale(D, M) :-
 	seconde_diag(3,D,M).
@@ -90,10 +94,11 @@ possible([X|L], J) :- unifiable(X,J), possible(L,J).
 
 unifiable(X,J) :- var(X); X=J.
 
-alignement_gagnant(Ali, J) :- possible(Ali, J), ground(Ali).
+alignement_gagnant(Ali, J) :- ground(Ali), possible(Ali, J).
 
-alignement_perdant(Ali, J) :- 	J=x, possible(Ali, o), ground(Ali);
-								J=o, possible(Ali, x), ground(Ali).
+alignement_perdant(Ali, J) :- adversaire(J,Ad), alignement_gagnant(Ali, Ad).
+	%J=x, possible(Ali, o), ground(Ali);
+%								J=o, possible(Ali, x), ground(Ali).
 
 
 	/* ****************************
@@ -107,7 +112,8 @@ alignement_perdant(Ali, J) :- 	J=x, possible(Ali, o), ground(Ali);
 	*/	
 
 % A FAIRE
-% successeur(J, Etat,[L,C]) :- ? ? ? ?  
+successeur(J, Etat,[Ligne,Colonne]) :- 
+	nth1(Ligne,Etat,LigneChoisie),nth1(Colonne,LigneChoisie,CaseLC),var(CaseLC),CaseLC=J.
 
 	/**************************************
    	 EVALUATION HEURISTIQUE D'UNE SITUATION
@@ -124,13 +130,12 @@ alignement_perdant(Ali, J) :- 	J=x, possible(Ali, o), ground(Ali);
 
 
 
-CptPoss :- findall(Poss, )
+%CptPoss(Joueur, Situation) :- true.
 
 heuristique(J,Situation,H) :-
    H = 10000,
    alignement(Alig,Situation),
-   alignement_gagnant(Alig,J), !;
-   adversaire(J, Adv), CptPoss(J, )
+   alignement_gagnant(Alig,J), !.
 
 	
 heuristique(J,Situation,H) :-		% cas 2
@@ -143,6 +148,16 @@ heuristique(J,Situation,H) :-		% cas 2
 % c-a-d si Situation n'est ni perdante ni gagnante.
 
 % A FAIRE 					cas 3
-% heuristique(J,Situation,H) :- ? ? ? ?
+heuristique(J,Situation,H) :- 
+	findall(AliJoueurJ, (alignement(AliJoueurJ, Situation), possible(AliJoueurJ, J)), ListeAliJoueurJ),
+	length(ListeAliJoueurJ, NBJJ), %nb de cas gagnant pour le joueur X
+	adversaire(J, A),
+	findall(AliJoueurO, (alignement(AliJoueurO, Situation), possible(AliJoueurO, A)), ListeAliJoueurO),
+	length(ListeAliJoueurO, NBJO), %nb de cas gagnant pour le joueur O
+	H is NBJJ - NBJO.
 
+
+test_heur_gagnante(H) :-	test_gagnant_J(S), joueur_initial(J), heuristique(J,S,H).
+test_heur_perdante(H) :-	test_perdant_J(S), joueur_initial(J), heuristique(J,S,H).
+test_heur_egalite(H) :-		test_egalite(S), joueur_initial(J), heuristique(J,S,H).
 
