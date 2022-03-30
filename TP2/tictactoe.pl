@@ -120,12 +120,12 @@ successeur(J, Etat,[Ligne,Colonne]) :-
   	 **************************************/
 
 	/*
-	1/ l'heuristique est +infini si la situation J est gagnante pour J
-	2/ l'heuristique est -infini si la situation J est perdante pour J
+	1/ l heuristique est +infini si la situation J est gagnante pour J
+	2/ l heuristique est -infini si la situation J est perdante pour J
 	3/ sinon, on fait la difference entre :
-	   le nombre d'alignements possibles pour J
+	   le nombre d alignements possibles pour J
 	moins
- 	   le nombre d'alignements possibles pour l'adversaire de J
+ 	   le nombre d alignements possibles pour l adversaire de J
 */
 
 
@@ -144,8 +144,8 @@ heuristique(J,Situation,H) :-		% cas 2
    alignement_perdant(Alig,J), !.	
 
 
-% on ne vient ici que si les cut precedents n'ont pas fonctionne,
-% c-a-d si Situation n'est ni perdante ni gagnante.
+% on ne vient ici que si les cut precedents n ont pas fonctionne,
+% c-a-d si Situation n est ni perdante ni gagnante.
 
 % A FAIRE 					cas 3
 heuristique(J,Situation,H) :- 

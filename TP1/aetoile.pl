@@ -47,7 +47,7 @@ Predicat principal de l'algorithme :
 
 %*******************************************************************************
 
-main :- initial_state(S0), heuristique2(S0, H0), G0 is 0, F0 is H0+G0,
+main :- initial_state2(S0), heuristique2(S0, H0), G0 is 0, F0 is H0+G0,
 	empty(Pf), empty(Pu), empty(Q),
 	insert( [[F0,H0,G0], S0], Pf, Pf),
 	insert( [S0, [F0,H0,G0], nil, nil], Pu, Pu),
