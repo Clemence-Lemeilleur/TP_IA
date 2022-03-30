@@ -55,18 +55,21 @@ main :- initial_state2(S0), heuristique2(S0, H0), G0 is 0, F0 is H0+G0,
 
 %*******************************************************************************
 
-loop_successors([], _, _, _, _, _).
+loop_successors([], Pf, Pu, _, Pf, Pu).
 loop_successors([[S]|Ls], Pf, Pu, Q, Newpf, Newpu) :-
 	/*si S est dans Q, alors on oublie cet etat*/
-	(S=[U, _, _, _], belongs(U, Q), loop_successors(Ls, Pf, Pu, Q, Newpf, Newpu)
+	(
+	S=[U, _, _, _], belongs([U, _, _, _], Q), 
+	loop_successors(Ls, Pf, Pu, Q, Newpf, Newpu)
 	);(
 	/*si S est dans Pu, on garde la meilleure evaluation*/
-	S=[U, [Fs, _, _], _, _], belongs([U,[Fpu, Hpu, Gpu],Perepu, Apu], Pu), 
-	(Fs =< Fpu -> (
+	S=[U, [Fs, Hs, Gs], Peres, As], 
+	belongs([U,[Fpu, Hpu, Gpu],Perepu, Apu], Pu), 
+	(Fs < Fpu -> (
 		suppress([U,[Fpu, Hpu, Gpu],Perepu, Apu], Pu, Pu2),
-		suppress([U,[Fpu, Hpu, Gpu],Perepu, Apu], Pf, Pf2),
-		insert(S, Pu2, Pu3),
-		insert(S, Pf2, Pf3),
+		suppress([[Fpu, Hpu, Gpu],U], Pf, Pf2),
+		insert([U, [Fs, Hs, Gs], Peres, As], Pu2, Pu3),
+		insert([[Fs, Hs, Gs],U], Pf2, Pf3),
 		loop_successors(Ls, Pf3, Pu3, Q, Newpf, Newpu)
 		);(
 			loop_successors(Ls, Pf, Pu, Q, Newpf, Newpu)
@@ -74,10 +77,11 @@ loop_successors([[S]|Ls], Pf, Pu, Q, Newpf, Newpu) :-
 	)
 	);(
 	/*S est une nouvelle situation, on l'insere dans Pu et Pf*/
-	S =[_,[F,G,H], Pere, Action],   
-	insert(S, Pu, Pu2),
-	insert([[F,G,H], Pere, Action], Pf, Pf2),
-	loop_successors(Ls, Pf2, Pu2, Q), Newpf, Newpu).
+	S = [U,[F,G,H], Pere, Action],
+	insert([U,[F,G,H], Pere, Action], Pu, Pu2),
+	insert([[F,G,H], U], Pf, Pf2),
+	loop_successors(Ls, Pf2, Pu2, Q, Newpf, Newpu)
+	).
 	
 expand(U, G, Successeurs):-
 	findall( [S, [F, H, Ga], U, A], 
@@ -118,5 +122,21 @@ testexp :-
 		[ f,vide, e]], _, U, right]],
 	expand(U,0,Result).
 
+tests() :-
+	% initialisations S0, F0, H0, G0
 
-				
+	initial_state(S0),
+	G0 is 0,
+	heuristique2(S0,H0),
+	F0 is G0 + H0,
+
+	% initialisations Pf, Pu et Q 
+
+	empty(Q),
+	empty(Pu0),
+	empty(Pf0),
+	insert([[F0,H0,G0],S0], Pf0, Pf),
+	insert([S0, [F0,H0,G0], nil, nil], Pu0, Pu),
+	suppress_min([[F0,H0,G0],S0], Pf, Pf1),
+	suppress([S0, [F0,H0,G0], nil, nil], Pu, Pu1),
+	aetoile(Pf1,Pu1,Q).
