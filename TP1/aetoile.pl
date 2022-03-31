@@ -55,15 +55,16 @@ main :- initial_state2(S0), heuristique2(S0, H0), G0 is 0, F0 is H0+G0,
 
 %*******************************************************************************
 
-loop_successors([], Pf, Pu, _, Pf, Pu).
-loop_successors([[S]|Ls], Pf, Pu, Q, Newpf, Newpu) :-
+loop_successors([], Pf, Pu, _, Pf, Pu) :- write("oui").
+
+loop_successors([[U, _, _, _]|Ls], Pf, Pu, Q, Newpf, Newpu) :-
+	write("bernardoni le chauve\n"),
 	/*si S est dans Q, alors on oublie cet etat*/
-	(
-	S=[U, _, _, _], belongs([U, _, _, _], Q), 
-	loop_successors(Ls, Pf, Pu, Q, Newpf, Newpu)
-	);(
-	/*si S est dans Pu, on garde la meilleure evaluation*/
-	S=[U, [Fs, Hs, Gs], Peres, As], 
+	belongs([U, _, _, _], Q),
+	!,
+	loop_successors(Ls, Pf, Pu, Q, Newpf, Newpu).
+
+loop_successors([[U,[Fs,Hs,Gs], Peres, As] | Ls] , Pf, Pu, Q, Newpf, Newpu) :-
 	belongs([U,[Fpu, Hpu, Gpu],Perepu, Apu], Pu), 
 	(Fs < Fpu -> (
 		suppress([U,[Fpu, Hpu, Gpu],Perepu, Apu], Pu, Pu2),
@@ -74,19 +75,24 @@ loop_successors([[S]|Ls], Pf, Pu, Q, Newpf, Newpu) :-
 		);(
 			loop_successors(Ls, Pf, Pu, Q, Newpf, Newpu)
 		)
-	)
-	);(
+	),
+	!.
+
+loop_successors([[U,[F,H,G],Pere, Action] | Ls], Pf, Pu, Q, Newpf, Newpu) :-
 	/*S est une nouvelle situation, on l'insere dans Pu et Pf*/
-	S = [U,[F,G,H], Pere, Action],
+	write("fanifahofjaoeuhuiahiuae\n"),
 	insert([U,[F,G,H], Pere, Action], Pu, Pu2),
 	insert([[F,G,H], U], Pf, Pf2),
-	loop_successors(Ls, Pf2, Pu2, Q, Newpf, Newpu)
-	).
+	loop_successors(Ls, Pf2, Pu2, Q, Newpf, Newpu).
+
 	
 expand(U, G, Successeurs):-
 	findall( [S, [F, H, Ga], U, A], 
-		(rule(A, _, U, S), heuristique(S,H),Ga is G+1,F is G+H), 
-		Successeurs).
+	(rule(A, Cpt, U, S), 
+	heuristique2(S,H),
+	Ga is G+Cpt,F is Ga+H), 
+	Successeurs).
+
 
 affiche_solution(_, nil) :- write("Finito\n").
 affiche_solution(Q, U) :-
@@ -94,6 +100,7 @@ affiche_solution(Q, U) :-
 	write(A), write(" ; "),
 	write(U), write(\n),
 	affiche_solution(NewQ, Pere).
+
 
 aetoile(Pf, Pu, _) :-
 	empty(Pf), empty(Pu),
@@ -139,4 +146,40 @@ tests() :-
 	insert([S0, [F0,H0,G0], nil, nil], Pu0, Pu),
 	suppress_min([[F0,H0,G0],S0], Pf, Pf1),
 	suppress([S0, [F0,H0,G0], nil, nil], Pu, Pu1),
-	aetoile(Pf1,Pu1,Q).
+	%aetoile(Pf1,Pu1,Q),
+	
+	expand(S0,G0,L),
+	write(L),
+	write("BBBBBBBBBBBB\n\n"),
+	%Basic Test
+	put_flat(Pu),
+	write("\n\n"),
+	put_flat(Pf),
+	write("fauzgyfuyazghyfia\n\n"),
+	loop_successors(L, Pf, Pu, Q, Pf1, Pu1),
+	write("azeazeazeaaaaaaaaaaaaaaaa\n\n"),
+	put_flat(Pu1),
+	write("azafazfzafza\n\n"),
+	put_flat(Pf1).
+	%Test S in Q
+	%insert([[[a,b,c],[g,h,d],[f,vide,e]],[4,3,1],[[a,b,c],[g,h,x],[vide,f,e]],right],Q,Q1),
+	%loop_successors(L, Pu, Pf, Q1, Pu1, Pf1),
+	%put_flat(Pu1),
+	%write("\n\n"),
+	%put_flat(Pf1).
+	% Test with S in Pu wiht F0 > F
+	%insert([[[a,b,c],[g,h,d],[f,vide,e]],[5,2,1],[[a,b,c],[g,h,d],[vide,f,e]],left],Pu,Pu2),
+	%insert([[5,2,1],[[a,b,c],[g,h,d],[f,vide,e]]],Pf,Pf2),
+	%loop_successors(L, Pu2, Pf2, Q, Pu1, Pf1),
+	%put_flat(Pu1),
+	%write("\n\n"),
+	%put_flat(Pf1).
+	/*
+	% Test with S in Pu wiht F0 < F
+	 insert([[[a,b,c],[g,h,d],[f,vide,e]],[3,2,1],[[a,b,c],[g,h,d],[vide,f,e]],left],Pu,Pu2),
+	 insert([[3,2,1],[[a,b,c],[g,h,d],[f,vide,e]]],Pf,Pf2),
+	 loop_successors(L, Pu2, Pf2, Q, Pu1, Pf1),
+	 put_flat(Pu1),
+	 write("\n\n"),
+	 put_flat(Pf1).
+	*/
