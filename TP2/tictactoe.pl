@@ -42,7 +42,7 @@ test_perdant_J([ 	[x,x,o],
 					[o,o,o],
 					[x,o,x] ]).
 
-test_negmax1([	[x,o,_],
+test_negmaxaa1([	[x,o,_],
 				[o,_,o],
 				[x,o,_] ]).
 

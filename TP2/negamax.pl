@@ -87,6 +87,7 @@ successeurs(J,Etat,Succ) :-
 		    successeur(J,Etat_Suiv,Coup),
 		    Succ).
 
+test_successeurs(S,L):- joueur_initial(J), situation_initiale(S), successeur(J,S,L).
 	/*************************************
          Boucle permettant d'appliquer negamax 
          a chaque situation suivante :
@@ -146,18 +147,12 @@ meilleur([[Coup, Valeur] | Couple_suivant], Meilleur_Couple) :-
   	PROGRAMME PRINCIPAL
   	*******************/
 
-%main(B,V, Pmax) :-
-
-%	true.        
+main(B,V, Pmax) :-
+	joueur_initial(J), 
+	situation_initiale(S), 
+	negamax(J,S,0,Pmax,[B,V]).
 
 % situation_initiale(E), negamax(x, E, 0, 1, [_, 4]).
-
-	/*
-A FAIRE :
-	Compl閠er puis tester le programme principal pour plusieurs valeurs de la profondeur maximale.
-	Pmax = 1, 2, 3, 4 ...
-	Commentez les r閟ultats obtenus.
-	*/
 
 
 test_negmax1([	[x,o,_],
@@ -168,5 +163,5 @@ test_negmax2([	[x,_,_],
 				[_,_,o],
 				[x,o,_] ]).
 
-:- joueur_initial(J), test_negmax1(S), negamax(J,S,0,3,A).
+
 
