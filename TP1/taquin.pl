@@ -219,7 +219,7 @@ heuristique1(U, H) :-
 distManhat(P, U, Final, Dist) :-
    coordonnees([Lu, Cu], U, P),
    coordonnees([Lf, Cf], Final, P), P\=vide,
-   Dist is (abs(Lu-Lf)+abs(Cu-Cf)).
+   Dist is (abs(Lf-Lu)+abs(Cf-Cu)).
 
 
 heuristique2(U, H) :-
